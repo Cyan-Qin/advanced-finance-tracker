@@ -1,4 +1,184 @@
 "use strict";
+// ---------- 国际化 ----------
+const translations = {
+  en: {
+    // 头部
+    appEyebrow: "Personal Finance",
+    appTitle: "Advanced Finance Tracker",
+    appSubtitle: "Track income, expenses, and your balance with clarity.",
+    // 摘要
+    totalBalance: "Total Balance",
+    totalIncome: "Total Income",
+    totalExpenses: "Total Expenses",
+    // 图表区
+    cashFlowTitle: "Cash Flow Overview",
+    cashFlowSub: "Income vs Expense",
+    monthlyTrendTitle: "Monthly Expense Trend",
+    monthlyTrendSub: "Expense by month",
+    // 表单
+    addTransactionTitle: "Add Transaction",
+    titleLabel: "Title",
+    amountLabel: "Amount",
+    categoryLabel: "Category",
+    dateLabel: "Date",
+    addBtn: "Add Transaction",
+    cancelEditBtn: "Cancel Edit",
+    // 过滤器
+    filtersTitle: "Filters & Search",
+    categoryFilter: "Category",
+    typeFilter: "Type",
+    searchLabel: "Search by title",
+    allCategories: "All categories",
+    allTypes: "All",
+    incomeType: "Income",
+    expenseType: "Expense",
+    // 交易列表
+    transactionsTitle: "Transactions",
+    resultsCount: "results",
+    emptyState: "No transactions yet. Add your first one to get started.",
+    emptyBtn: "Add First Transaction",
+    // 按钮通用
+    edit: "Edit",
+    delete: "Delete",
+    // 导出
+    exportCsv: "Export CSV",
+    resetFilters: "Reset Filters",
+    lightMode: "Light Mode",
+    darkMode: "Dark Mode",
+    // 图表 canvas 文字
+    chartIncome: "Income",
+    chartExpense: "Expense",
+    // Cookie 横幅（独立于 main.js 的脚本，但为了统一也可放在这里）
+    cookieMessage: "We use cookies to enhance your experience. By continuing to use this site, you agree to our",
+    cookiePrivacyLink: "Privacy Policy",
+    cookieAccept: "Accept",
+    // 模态框
+    deleteConfirmTitle: "Delete transaction?",
+    deleteConfirmMsg: "This action cannot be undone.",
+    cancel: "Cancel",
+    confirmDelete: "Delete",
+    // Toast 消息（新增/编辑/删除等）动态使用，后面函数内处理
+  },
+  zh: {
+    appEyebrow: "个人财务",
+    appTitle: "高级财务追踪器",
+    appSubtitle: "清晰追踪收入、支出和结余。",
+    totalBalance: "总余额",
+    totalIncome: "总收入",
+    totalExpenses: "总支出",
+    cashFlowTitle: "现金流概览",
+    cashFlowSub: "收入 vs 支出",
+    monthlyTrendTitle: "月度支出趋势",
+    monthlyTrendSub: "每月支出",
+    addTransactionTitle: "添加交易",
+    titleLabel: "标题",
+    amountLabel: "金额",
+    categoryLabel: "分类",
+    dateLabel: "日期",
+    addBtn: "添加交易",
+    cancelEditBtn: "取消编辑",
+    filtersTitle: "筛选与搜索",
+    categoryFilter: "分类",
+    typeFilter: "类型",
+    searchLabel: "按标题搜索",
+    allCategories: "全部分类",
+    allTypes: "全部",
+    incomeType: "收入",
+    expenseType: "支出",
+    transactionsTitle: "交易记录",
+    resultsCount: "条结果",
+    emptyState: "暂无交易记录。添加第一条开始使用。",
+    emptyBtn: "添加第一笔交易",
+    edit: "编辑",
+    delete: "删除",
+    exportCsv: "导出 CSV",
+    resetFilters: "重置筛选",
+    lightMode: "浅色模式",
+    darkMode: "深色模式",
+    chartIncome: "收入",
+    chartExpense: "支出",
+    cookieMessage: "我们使用 Cookie 来提升您的体验。继续使用本网站即表示您同意我们的",
+    cookiePrivacyLink: "隐私政策",
+    cookieAccept: "接受",
+    deleteConfirmTitle: "删除交易？",
+    deleteConfirmMsg: "此操作不可撤销。",
+    cancel: "取消",
+    confirmDelete: "删除",
+  }
+};
+
+let currentLang = localStorage.getItem("financeLang") || "en";
+
+function t(key) {
+  return translations[currentLang][key] || key;
+}
+
+function updatePageLanguage() {
+  // 更新头部
+  document.querySelector(".app__eyebrow").textContent = t("appEyebrow");
+  document.querySelector(".app__title").textContent = t("appTitle");
+  document.querySelector(".app__subtitle").textContent = t("appSubtitle");
+  // 更新摘要卡片标题
+  document.querySelectorAll(".summary__card")[0].querySelector(".summary__label").textContent = t("totalBalance");
+  document.querySelectorAll(".summary__card")[1].querySelector(".summary__label").textContent = t("totalIncome");
+  document.querySelectorAll(".summary__card")[2].querySelector(".summary__label").textContent = t("totalExpenses");
+  // 图表区标题
+  document.querySelector(".chart .transactions__header .section-title").textContent = t("cashFlowTitle");
+  document.querySelector(".chart .transactions__header .transactions__meta").textContent = t("cashFlowSub");
+  // 月度趋势区
+  document.querySelector(".trend .transactions__header .section-title").textContent = t("monthlyTrendTitle");
+  document.querySelector(".trend .transactions__header .transactions__meta").textContent = t("monthlyTrendSub");
+  // 表单区域
+  document.querySelector(".form .section-title").textContent = t("addTransactionTitle");
+  const formLabels = document.querySelectorAll(".form__field span");
+  if (formLabels[0]) formLabels[0].textContent = t("titleLabel");
+  if (formLabels[1]) formLabels[1].textContent = t("amountLabel");
+  if (formLabels[2]) formLabels[2].textContent = t("categoryLabel");
+  if (formLabels[3]) formLabels[3].textContent = t("dateLabel");
+  document.getElementById("submitBtn").textContent = t("addBtn");
+  document.getElementById("cancelEditBtn").textContent = t("cancelEditBtn");
+  // 筛选区
+  document.querySelector(".filters .section-title").textContent = t("filtersTitle");
+  const filterLabels = document.querySelectorAll(".filters .form__field span");
+  if (filterLabels[0]) filterLabels[0].textContent = t("categoryFilter");
+  if (filterLabels[1]) filterLabels[1].textContent = t("typeFilter");
+  if (filterLabels[2]) filterLabels[2].textContent = t("searchLabel");
+  // 下拉框选项（需要保留 value，只改显示文本）
+  const categorySelect = document.getElementById("filterCategory");
+  if (categorySelect && categorySelect.options[0]) {
+    categorySelect.options[0].text = t("allCategories");
+  }
+  const typeSelect = document.getElementById("filterType");
+  if (typeSelect && typeSelect.options[0]) typeSelect.options[0].text = t("allTypes");
+  if (typeSelect && typeSelect.options[1]) typeSelect.options[1].text = t("incomeType");
+  if (typeSelect && typeSelect.options[2]) typeSelect.options[2].text = t("expenseType");
+  // 交易列表区域标题
+  document.querySelector(".transactions .section-title").textContent = t("transactionsTitle");
+  // 导出按钮和重置按钮（已有文字，但可动态）
+  document.getElementById("exportCsvBtn").textContent = t("exportCsv");
+  document.getElementById("resetFiltersBtn").textContent = t("resetFilters");
+  // 主题按钮（如果主题是 light，显示 Dark Mode，否则 Light Mode，但语言切换也要改）
+  const themeBtn = document.getElementById("themeToggleBtn");
+  if (themeBtn) {
+    themeBtn.textContent = state.theme === "light" ? t("darkMode") : t("lightMode");
+  }
+  // 语言切换按钮本身显示（用来切换的目标语言）
+  const langBtn = document.getElementById("langToggleBtn");
+  if (langBtn) {
+    langBtn.textContent = currentLang === "en" ? "中文" : "English";
+  }
+  // 删除确认模态框
+  document.getElementById("confirmTitle").textContent = t("deleteConfirmTitle");
+  document.querySelector("#confirmModal .modal__text").textContent = t("deleteConfirmMsg");
+  document.getElementById("cancelDeleteBtn").textContent = t("cancel");
+  document.getElementById("confirmDeleteBtn").textContent = t("confirmDelete");
+  // 重新渲染动态区域（交易列表，因为它内部包含“Edit”/“Delete”按钮文字，且空状态也需翻译）
+  renderTransactions();
+  // 重新渲染图表（图表中的文字：Income / Expense）
+  renderChart();
+  // 重新渲染月度趋势（趋势内的文字“No expense trend data available”）
+  renderMonthlyTrend();
+}
 
 import {
   escapeHTML,
@@ -289,15 +469,15 @@ const renderTransactions = () => {
   dom.resultsCount.textContent = `${filtered.length} results`;
 
   if (filtered.length === 0) {
-    dom.transactionsList.innerHTML = `
-      <div class="transactions__empty">
-        <div class="empty__icon">+</div>
-        <p>No transactions yet. Add your first one to get started.</p>
-        <button class="btn btn--accent empty-add-btn" type="button">Add First Transaction</button>
-      </div>
-    `;
-    return;
-  }
+  dom.transactionsList.innerHTML = `
+    <div class="transactions__empty">
+      <div class="empty__icon">+</div>
+      <p>${t("emptyState")}</p>
+      <button class="btn btn--accent empty-add-btn" type="button">${t("emptyBtn")}</button>
+    </div>
+  `;
+  return;
+}
 
   const groups = groupByMonth(filtered);
 
@@ -329,8 +509,8 @@ const renderTransactionItem = (tx) => {
       </div>
       <div>
         <p class="amount ${typeClass}">${escapeHTML(formattedAmount)}</p>
-        <button class="edit-btn" data-id="${escapeHTML(tx.id)}">Edit</button>
-        <button class="delete-btn" data-id="${escapeHTML(tx.id)}">Delete</button>
+        <button class="edit-btn" data-id="${escapeHTML(tx.id)}">${t("edit")}</button>
+        <button class="delete-btn" data-id="${escapeHTML(tx.id)}">${t("delete")}</button>
       </div>
     </div>
   `;
@@ -407,8 +587,8 @@ const renderChart = () => {
 
   ctx.fillStyle = "#f8f4e9";
   ctx.font = "14px sans-serif";
-  ctx.fillText("Income", 170, baseY + 20);
-  ctx.fillText("Expense", 160 + barWidth + gap, baseY + 20);
+  ctx.fillText(t("chartIncome"), 170, baseY + 20);
+  ctx.fillText(t("chartExpense"), 160 + barWidth + gap, baseY + 20);
 
   ctx.fillText(formatCurrency(income), 150, baseY - incomeHeight - 10);
   ctx.fillText(
@@ -436,10 +616,9 @@ const renderMonthlyTrend = () => {
   const entries = Object.entries(monthlyExpenses);
 
   if (entries.length === 0) {
-    dom.monthlyTrendContainer.innerHTML =
-      "<p>No expense trend data available.</p>";
-    return;
-  }
+  dom.monthlyTrendContainer.innerHTML = `<p>${t("noExpenseTrend") || "No expense trend data available."}</p>`;
+  return;
+}
 
   dom.monthlyTrendContainer.innerHTML = entries
     .map(
@@ -579,3 +758,13 @@ const initializeApp = () => {
 };
 
 initializeApp();
+
+const langToggleBtn = document.getElementById("langToggleBtn");
+if (langToggleBtn) {
+  langToggleBtn.addEventListener("click", () => {
+    currentLang = currentLang === "en" ? "zh" : "en";
+    localStorage.setItem("financeLang", currentLang);
+    updatePageLanguage();
+    // 重新渲染可能依赖语言的其他动态内容（如 Toast 消息文字硬编码，但不受影响）
+  });
+}

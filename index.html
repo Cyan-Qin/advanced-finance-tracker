@@ -223,5 +223,79 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <script type="module" src="main.js"></script>
+    <!-- Cookie 横幅（全英文，初始可见） -->
+<div id="cookieBanner" class="cookie-banner" style="display: flex;">
+  <p>We use cookies to enhance your experience. By continuing to use this site, you agree to our <a href="#" id="privacyPolicyLink">Privacy Policy</a>.</p>
+  <button id="acceptCookiesBtn" class="btn btn--accent">Accept</button>
+</div>
+
+<!-- 隐私政策模态框 -->
+<div id="privacyModal" class="privacy-modal" aria-hidden="true">
+  <div class="privacy-modal__content">
+    <button class="privacy-modal__close" data-close>&times;</button>
+    <h2>Privacy Policy</h2>
+    <p>Last updated: May 17, 2026</p>
+    <p>This Finance Tracker respects your privacy. We:</p>
+    <ul>
+      <li><strong>Do not collect any personally identifiable information</strong> – All data is stored only in your browser's local storage.</li>
+      <li><strong>Do not use third-party tracking or analytics tools</strong> – No Google Analytics, Facebook pixels, etc.</li>
+      <li><strong>Do not share your data</strong> – Your financial data never leaves your device.</li>
+      <li><strong>Use necessary local storage</strong> – Only to save your transactions and theme preferences.</li>
+    </ul>
+    <p>If you have any questions, please contact us at: <a href="mailto:privacy@example.com">privacy@example.com</a></p>
+    <button class="btn" data-close>Close</button>
+  </div>
+</div>
+
+<script>
+  // 处理 Cookie 横幅和隐私模态框（独立于主模块，不会冲突）
+  (function() {
+    const banner = document.getElementById('cookieBanner');
+    const acceptBtn = document.getElementById('acceptCookiesBtn');
+    const privacyLink = document.getElementById('privacyPolicyLink');
+    const privacyModal = document.getElementById('privacyModal');
+    const closeBtns = document.querySelectorAll('[data-close]');
+
+    // 检查是否已经同意
+    if (localStorage.getItem('cookieConsent')) {
+      banner.style.display = 'none';
+    }
+
+    // 接受按钮
+    if (acceptBtn) {
+      acceptBtn.addEventListener('click', () => {
+        localStorage.setItem('cookieConsent', 'true');
+        banner.style.display = 'none';
+        // 可选：调用已有的 showToast（如果需要）
+        if (typeof showToast === 'function') showToast('Cookies accepted', 'success');
+      });
+    }
+
+    // 打开隐私模态框
+    if (privacyLink && privacyModal) {
+      privacyLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        privacyModal.classList.add('is-open');
+        privacyModal.setAttribute('aria-hidden', 'false');
+      });
+    }
+
+    // 关闭模态框（通过 ×、关闭按钮、背景）
+    closeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        privacyModal.classList.remove('is-open');
+        privacyModal.setAttribute('aria-hidden', 'true');
+      });
+    });
+    if (privacyModal) {
+      privacyModal.addEventListener('click', (e) => {
+        if (e.target === privacyModal) {
+          privacyModal.classList.remove('is-open');
+          privacyModal.setAttribute('aria-hidden', 'true');
+        }
+      });
+    }
+  })();
+</script>
   </body>
 </html>
